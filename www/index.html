@@ -1,246 +1,60 @@
-<!doctype html>
-<html lang="en" >
-<head>
-<meta charset="utf-8" />
-<meta name="format-detection" content="telephone=no" />
-<meta name="msapplication-tap-highlight" content="no" />
-<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
-<!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src * https://www.yugmedeals.com https://*.razorpay.com data: gap: https://ssl.gstatic.com 'unsafe-inline' 'unsafe-eval'; style-src 'self' https://www.yugmedeals.com https://fonts.googleapis.com https://maxcdn.bootstrapcdn.com https://kit-free.fontawesome.com https://cdn.jsdelivr.net 'unsafe-inline'; media-src *" />
-<!-- Good default declaration:
-* gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
-* https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
-* Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
-    * Enable inline JS: add 'unsafe-inline' to default-src
-    * Enable eval(): add 'unsafe-eval' to default-src
-* Create your own at http://cspisawesome.com
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2016 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
 -->
-<!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://www.yugmedeals.com/ data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
-<title>Hello World</title>
-<link rel="dns-prefetch" href="https://www.yugmedeals.com/" />
-<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
-<link rel="stylesheet" type="text/css" href="css/index.css" />
-<script type="text/javascript" src="cordova.js"></script>
-<script type="text/javascript" src="js/jquery-2.0.3.min.js" ></script>
-<script type="text/javascript" src="js/product_upload.js"></script>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
+    <!-- Good default declaration:
+    * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+    * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+        * Enable inline JS: add 'unsafe-inline' to default-src
+        * Enable eval(): add 'unsafe-eval' to default-src
+    * Create your own at http://cspisawesome.com
+    -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
+
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <title>Hello World</title>
 </head>
 
 <body>
-<div class="preloader">
-<div class="loading_div" ><svg class="loading_svg" viewBox="25 25 50 50"><circle stroke="#ffffff" class="loading_svg_icon" cx="50" cy="50" r="20" fill="none" stroke-width="5" stroke-miterlimit="10"></circle></svg></div>
-</div>
-<div class="col-xs-12 zero-padding seller_info"></div>
-
-<div class="index_contacts col-xs-12 zero-padding" id="index_contacts" >
-<span class="col-xs-12 zero-padding index_contacts_head">Invite your Contacts <a href="contacts_list.html" class="pull-right">See all</a></span>
-<div class="col-xs-12 zero-margin zero-padding jssor_slider contacts_list">
-<ul id="allcontacts" class="col-xs-12 zero-margin zero-padding contacts_list_slider"></ul>
-</div>
-</div>
-
-<script type="text/javascript" src="js/lozad.min.js" ></script>
-<script type="text/javascript">
-var site_url = 'https://www.yugmedeals.com/';
-
-var getUrlParameter = function getUrlParameter(sParam){
-	var sPageURL = decodeURIComponent(window.location.search.substring(1)),
-	sURLVariables = sPageURL.split('&'),
-	sParameterName,
-	i;
-	for (i = 0; i < sURLVariables.length; i++) 
-	{
-		sParameterName = sURLVariables[i].split('=');
-		if (sParameterName[0] === sParam) 
-		{
-			return sParameterName[1] === undefined ? true : sParameterName[1];
-		}
-	}
-};
-
-document.addEventListener("deviceready", onDeviceReady, false);
-function onDeviceReady() {
-console.log(StatusBar);
-StatusBar.backgroundColorByHexString("#3367D6");
-
-if(getUrlParameter('type') == 'logout'){
-    $("body").addClass('seller_bg');
-}
-
-if (window.localStorage.getItem("seller_id") !== null) {
-    var user_id = window.localStorage.getItem("seller_id");
-}else{
-    var user_id = '';
-}
-if(user_id == ''){
-$.get(site_url+'seller',{'user_id':user_id,'type':'test','load_type':'app','login_type':'account_kit'},function(data){
-    if(data){
-        $("body").addClass('seller_bg');
-        $(".seller_info").html(data);
-        var fs_observer = lozad('.lozad', {
-            threshold: 0.1,
-            load: function(el) {
-                el.src = el.getAttribute("data-src");
-                el.onload = function(){
-                    el.removeAttribute("data-src");
-                    el.classList.add('fade_in');
-                    //el.classList.remove('product_index_image_blur');
-                }
-            }
-        });
-        fs_observer.observe();
-        setTimeout(function(){
-            $('.preloader').hide();
-        },'500');
-    }
-});
-}else{
-    getpage();
-    var push_id = window.localStorage.getItem("notification_id");
-    if(typeof push_id !== 'undefined' && push_id !== null){
-        var seller_id = window.localStorage.getItem("seller_id");
-        $.get(site_url+'seller/stores_update_id',{'load_type':'app','user_id':seller_id,'push_id':push_id},function(data){
-            
-        });
-    }else{
-        window.plugins.OneSignal.addSubscriptionObserver(function(state){
-            if(!state.from.subscribed && state.to.subscribed) {
-            console.log("Subscribed for OneSignal push notifications!")
-            // get player ID
-            state.to.userId
-            }
-            console.log("Push Subscription state changed: " + JSON.stringify(state));
-            var alert_id = window.localStorage.getItem("notification_id");
-            if(localStorage.getItem("notification_id") === null){
-                if(state.to.userId) {
-                    window.localStorage.setItem("notification_id", state.to.userId);//state.to.userId
-                }
-            }
-            var push_id = window.localStorage.getItem("notification_id");
-            if(typeof push_id !== 'undefined' && push_id !== null){
-                var seller_id = window.localStorage.getItem("seller_id");
-                $.get(site_url+'seller/stores_update_id',{'load_type':'app','user_id':seller_id,'push_id':push_id},function(data){
-                    
-                });
-            }
-        });
-    }
-}
-getDeviceInfo();
-// Add to index.js or the first page that loads with your app.
-// For Intel XDK and please add this to your app.js.
-
-//document.addEventListener('deviceready', function () {
-  // Enable to debug issues.
-  // window.plugins.OneSignal.setLogLevel({logLevel: 4, visualLevel: 4});
-  
-    var notificationOpenedCallback = function(jsonData) {
-        console.log('notificationOpenedCallback: ' + JSON.stringify(jsonData));
-    };
-    
-    window.plugins.OneSignal
-    .startInit("f5c3ab68-3d32-4187-9538-d1b2046da1e7")
-    .handleNotificationOpened(notificationOpenedCallback)
-    .endInit();
-//}, false);
-}
-
-function getDeviceInfo() {
-/*information = 'Device Name: ' + device.name + '<br />' +
-              'cordova: ' + device.cordova + "<br />" +
-              'model: ' + device.model + "<br />" +
-              'platform: ' + device.platform + "<br />" +
-              'uuid: '+device.uuid+"<br />" +
-              'version: ' + device.version + "<br />";
-*/
-if(device.name == 'undefined'){
-var device_name = device.model;
-}else{
-var device_name = device.name;
-}
-
-if(device.uuid != ''){
-$(".affiliate_container").prepend('<input type="hidden" id="device_id" value="'+device.uuid+'"/>');
-}
-}
-
-function getpage(){
-if(getUrlParameter('type')){
-    var p_type = getUrlParameter('type');
-}else{
-    var p_type = 'index';
-}
-if(p_type=='logout'){
-    localStorage.removeItem('seller_id');
-}
-if(getUrlParameter('store') !== null){var store = getUrlParameter('store');}else{var store = '';}
-if(getUrlParameter('product') !== null){var product = getUrlParameter('product');}else{var product = '';}
-if(getUrlParameter('stock') !== null){var stock = getUrlParameter('stock');}else{var stock = '';}
-if(getUrlParameter('category') !== null){var category = getUrlParameter('category');}else{var category = '';}
-if(getUrlParameter('status') !== null){var status = getUrlParameter('status');}else{var status = '';}
-if(localStorage.getItem("seller_id") !== null){
-    var type = p_type;
-    var user_id = localStorage.getItem('seller_id');
-}else{
-    var type = 'index';
-    var user_id = '';
-}
-if(type=='item_info'){
-    var o_id = getUrlParameter('id');
-    $.get(site_url+'seller/item_info',{'o_id':o_id,'seller_id':user_id,'load_type':'app'},function(data){
-        if(data){
-            $(".seller_info").html(data);
-            $('.head_logo').hide();
-            $('.head_product_name').show().html('Item Info');
-            setTimeout(function(){
-                $('.preloader').hide();
-            },'500');
-        }
-    });
-}else{
-    $.get(site_url+'seller/'+type,{'user_id':user_id,'status':status,'load_type':'app','store':store,'product':product,'category':category,'stock':stock},function(data){
-    if(data){
-        $(".seller_info").html(data);
-        if(type=='index' && window.localStorage.getItem("seller_id") !== null){
-            getContacts();
-            $('.head_logo').show();
-            $('.head_product_name').hide();
-        }else{
-            $('.head_logo').hide();
-            $('.head_product_name').show().html(type.replace('_',' '));
-        }
-        var fs_observer = lozad('.lozad', {
-            threshold: 0.1,
-            load: function(el) {
-                el.src = el.getAttribute("data-src");
-                el.onload = function(){
-                    el.removeAttribute("data-src");
-                    el.classList.add('fade_in');
-                    //el.classList.remove('product_index_image_blur');
-                }
-            }
-        });
-        fs_observer.observe();
-        setTimeout(function(){
-            $('.preloader').hide();
-        },'500');
-    }
-    });
-}
-}
-
-function showLeft(){
-$(this).addClass('active');
-$("#seller_admin_menu").addClass("left_menu_open");
-$('body').css('overflow','hidden');
-};
-function hideLeft(){
-$("#showLeft").removeClass('active');
-$("#seller_admin_menu").removeClass("left_menu_open");
-$('body').css('overflow','auto');
-};
-</script>
-<script type="text/javascript" src="js/classie.js"></script>
-<script type="text/javascript" src="js/contacts_index.js"></script>
+    <div class="app">
+        <h1>PhoneGap</h1>
+        <div id="deviceready" class="blink">
+            <p class="event listening">Connecting to Device</p>
+            <p class="event received">Device is Ready</p>
+        </div>
+    </div>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript">
+        app.initialize();
+    </script>
 </body>
 
 </html>
